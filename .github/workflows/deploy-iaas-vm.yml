@@ -23,15 +23,6 @@ jobs:
         run: npm run build
       - name: Test Node.js app
         run: npm run test
-      - name: Transfer build files
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.AZURE_VM_USERNAME }}
-          key: ${{ secrets.AZURE_VM_KEY }}
-          source: "./*"
-          target: "/app"
-          overwrite: true
       - name: Restart service
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -40,4 +31,20 @@ jobs:
           key: ${{ secrets.AZURE_VM_KEY }}
           script: |
             sudo systemctl stop webapp
+            sudo rm -rf /app/*
+      - name: Transfer build files
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          key: ${{ secrets.AZURE_VM_KEY }}
+          source: "./*"
+          target: "/app"
+      - name: Restart service
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          key: ${{ secrets.AZURE_VM_KEY }}
+          script: |
             sudo systemctl start webapp
