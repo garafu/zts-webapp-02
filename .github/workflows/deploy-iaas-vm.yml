@@ -31,7 +31,6 @@ jobs:
           key: ${{ secrets.AZURE_VM_KEY }}
           script: |
             sudo systemctl stop webapp
-            sudo rm -rf /app/*
       - name: Transfer build files
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -40,6 +39,7 @@ jobs:
           key: ${{ secrets.AZURE_VM_KEY }}
           source: "./*"
           target: "/app"
+          rm: true
       - name: Restart service
         uses: appleboy/ssh-action@v0.1.10
         with:
